@@ -1,12 +1,12 @@
-import { createContext, useState, useEffect, useContext } from 'react';
-import { authAPI } from '../services/api';
+import { createContext, useState, useEffect, useContext } from "react";
+import { authAPI } from "../services/api";
 
 const AuthContext = createContext();
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
+    throw new Error("useAuth must be used within AuthProvider");
   }
   return context;
 };
@@ -14,7 +14,8 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState(localStorage.getItem('token'));
+  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [isMedia, setIsMedia] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -23,32 +24,39 @@ export const AuthProvider = ({ children }) => {
           const response = await authAPI.getMe();
           setUser(response.data.user);
         } catch (error) {
-          console.error('Auth check failed:', error);
+          console.error("Auth check failed:", error);
           logout();
         }
       }
       setLoading(false);
     };
 
+    resizeWindow();
     checkAuth();
   }, [token]);
+
+  const resizeWindow = () => {
+    const innerWidth = window.innerWidth;
+    if (innerWidth <= 768) setIsMedia(true);
+    else setIsMedia(false);
+  };
 
   const register = async (userData) => {
     try {
       const response = await authAPI.register(userData);
       const { token, user } = response.data;
-      
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
-      
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
       setToken(token);
       setUser(user);
-      
+
       return { success: true, data: response.data };
     } catch (error) {
       return {
         success: false,
-        message: error.response?.data?.message || 'Ошибка регистрации'
+        message: error.response?.data?.message || "Ошибка регистрации",
       };
     }
   };
@@ -57,25 +65,25 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await authAPI.login(credentials);
       const { token, user } = response.data;
-      
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
-      
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
       setToken(token);
       setUser(user);
-      
+
       return { success: true, data: response.data };
     } catch (error) {
       return {
         success: false,
-        message: error.response?.data?.message || 'Ошибка входа'
+        message: error.response?.data?.message || "Ошибка входа",
       };
     }
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     setToken(null);
     setUser(null);
   };
@@ -88,7 +96,10 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     isAuthenticated: !!user,
-    isAdmin: user?.role === 'admin'
+    isAdmin: user?.role === "admin",
+    setIsMedia,
+    isMedia,
+    resizeWindow,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
