@@ -1067,9 +1067,7 @@ body {
   position: relative;
   opacity: 1;
   visibility: visible;
-  transition:
-    opacity 0.3s ease,
-    visibility 0.3s ease;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
 /* Скрываем бургер иконку когда меню открыто */
@@ -1132,7 +1130,7 @@ body {
   right: -100%;
   width: 380px;
   height: 100vh;
-  background: rgba(255, 255, 255, 1);
+  background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
@@ -1141,19 +1139,26 @@ body {
   display: flex;
   flex-direction: column;
   border-left: 1px solid rgba(255, 255, 255, 0.3);
+  overflow-y: auto; /* Добавляем скролл для всего контейнера */
 }
 
 .burger-menu__container--active {
   right: 0;
 }
 
-/* Хедер меню */
+/* Хедер меню - фиксируем сверху */
 .burger-menu__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px 24px 20px;
+  padding: 20px 24px;
   border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .burger-menu__logo {
@@ -1185,21 +1190,22 @@ body {
   transform: rotate(90deg);
 }
 
-/* Навигация */
+/* Навигация - прокручиваемая область */
 .burger-menu__nav {
   flex: 1;
-  padding: 24px;
+  padding: 16px 24px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
   overflow-y: auto;
+  min-height: min-content; /* Важно для правильной работы flex */
 }
 
 .burger-menu__link {
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 14px 20px;
+  padding: 16px 20px;
   color: #2d3748;
   text-decoration: none;
   font-size: 1.1rem;
@@ -1213,6 +1219,7 @@ body {
 .burger-menu__link svg {
   color: #667eea;
   transition: all 0.3s ease;
+  flex-shrink: 0; /* Предотвращаем сжатие иконки */
 }
 
 .burger-menu__link:hover {
@@ -1229,20 +1236,21 @@ body {
 /* Разделитель */
 .burger-menu__divider {
   height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(102, 126, 234, 0.2),
-    transparent
-  );
-  margin: 16px 0;
+  background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.2), transparent);
+  margin: 20px 0;
 }
 
-/* Футер меню */
+/* Футер меню - фиксируем снизу */
 .burger-menu__footer {
-  padding: 24px;
+  padding: 20px 24px 30px; /* Увеличиваем нижний отступ */
   border-top: 1px solid rgba(102, 126, 234, 0.1);
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
 }
 
 /* Блок пользователя */
@@ -1250,13 +1258,9 @@ body {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   padding: 16px;
-  background: linear-gradient(
-    135deg,
-    rgba(102, 126, 234, 0.1) 0%,
-    rgba(118, 75, 162, 0.1) 100%
-  );
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
   border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.5);
 }
@@ -1273,23 +1277,31 @@ body {
   font-size: 1.2rem;
   font-weight: 600;
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  flex-shrink: 0;
 }
 
 .burger-menu__user-info {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 0; /* Для корректного обрезания текста */
 }
 
 .burger-menu__user-name {
   font-weight: 600;
   color: #2d3748;
   font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .burger-menu__user-email {
   font-size: 0.85rem;
   color: #718096;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Кнопка выхода */
@@ -1318,6 +1330,7 @@ body {
 
 .burger-menu__logout svg {
   transition: transform 0.3s ease;
+  flex-shrink: 0;
 }
 
 .burger-menu__logout:hover svg {
@@ -1381,16 +1394,71 @@ body {
   border-radius: 4px;
 }
 
-/* Адаптивность */
+/* Стили для iPhone и мобильных устройств */
 @media (max-width: 480px) {
   .burger-menu__container {
     width: 100%;
     border-left: none;
   }
-
+  
   .burger-menu__button {
     width: 28px;
     height: 28px;
+  }
+  
+  /* Увеличиваем отступы для мобильных */
+  .burger-menu__nav {
+    padding: 12px 20px;
+  }
+  
+  .burger-menu__link {
+    padding: 18px 16px; /* Увеличиваем для лучшего тач-таргета */
+    font-size: 1.1rem;
+  }
+  
+  .burger-menu__footer {
+    padding: 20px 20px 30px;
+  }
+  
+  .burger-menu__auth {
+    gap: 16px;
+  }
+  
+  .burger-menu__login,
+  .burger-menu__register {
+    padding: 18px 16px; /* Увеличиваем кнопки для тача */
+    font-size: 1.1rem;
+  }
+  
+  .burger-menu__user {
+    padding: 18px 16px;
+  }
+  
+  .burger-menu__logout {
+    padding: 18px 16px;
+    font-size: 1.1rem;
+  }
+}
+
+/* Для очень маленьких экранов */
+@media (max-width: 360px) {
+  .burger-menu__nav {
+    padding: 8px 16px;
+  }
+  
+  .burger-menu__link {
+    padding: 16px 12px;
+    font-size: 1rem;
+  }
+  
+  .burger-menu__footer {
+    padding: 16px 16px 25px;
+  }
+  
+  .burger-menu__user-avatar {
+    width: 45px;
+    height: 45px;
+    font-size: 1.1rem;
   }
 }
 
@@ -1409,18 +1477,8 @@ body {
 }
 
 /* Задержки для анимации пунктов меню */
-.burger-menu__link:nth-child(1) {
-  animation-delay: 0.1s;
-}
-.burger-menu__link:nth-child(2) {
-  animation-delay: 0.2s;
-}
-.burger-menu__link:nth-child(3) {
-  animation-delay: 0.3s;
-}
-.burger-menu__link:nth-child(4) {
-  animation-delay: 0.4s;
-}
-.burger-menu__link:nth-child(5) {
-  animation-delay: 0.5s;
-}
+.burger-menu__link:nth-child(1) { animation-delay: 0.1s; }
+.burger-menu__link:nth-child(2) { animation-delay: 0.2s; }
+.burger-menu__link:nth-child(3) { animation-delay: 0.3s; }
+.burger-menu__link:nth-child(4) { animation-delay: 0.4s; }
+.burger-menu__link:nth-child(5) { animation-delay: 0.5s; }
